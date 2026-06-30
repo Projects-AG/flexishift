@@ -1,0 +1,28 @@
+buildscript {
+    ext {
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 21
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        kotlinVersion = "1.9.0"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // AGP 8.3.1 fixes the jlink --disable-plugin system-modules incompatibility with JDK 21
+        classpath("com.android.tools.build:gradle:8.3.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+// Keep build outputs inside the Android project on Linux.
+def buildBase = new File(rootProject.projectDir, "build")
+rootProject.buildDir = new File(buildBase, "_root")
+subprojects {
+    buildDir = new File(buildBase, project.name)
+}
