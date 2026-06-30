@@ -1,0 +1,57 @@
+name: iOS Bootstrap Certificates
+
+on:
+  workflow_dispatch:
+
+env:
+  APP_STORE_CONNECT_API_KEY_PATH: /tmp/AuthKey.p8
+
+jobs:
+  bootstrap-certs:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: mobile
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Configure SSH for match certs repo
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+
+      - name: Add GitHub to SSH known hosts
+        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Write App Store Connect API key
+        run: |
+          printf '%s' "$APP_STORE_CONNECT_API_KEY" > "$APP_STORE_CONNECT_API_KEY_PATH"
+          chmod 600 "$APP_STORE_CONNECT_API_KEY_PATH"
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+
+      - name: Generate and push signing certificates
+        working-directory: mobile/ios
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        run: bundle exec fastlane ios bootstrap_certs
+
+      - name: Remove API key file
+        if: always()
+        run: rm -f "$APP_STORE_CONNECT_API_KEY_PATH"

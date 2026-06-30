@@ -1,0 +1,10 @@
+git_url("git@github.com:YOUR_ORG/ios-certs.git")
+
+storage_mode("git")
+type("appstore")
+readonly(true)
+
+app_identifier(["com.flexishift.app"])
+
+# Uncomment and set if your certs repo uses a non-default branch:
+# git_branch("main")

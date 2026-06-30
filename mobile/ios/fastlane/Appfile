@@ -1,0 +1,5 @@
+app_identifier("com.flexishift.app")
+team_id("N5UWYZH7Y8")
+
+# Authentication uses the App Store Connect API key loaded in Fastfile (load_asc_api_key).
+# No Apple ID / app-specific password is required.

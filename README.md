@@ -93,4 +93,3 @@ Digital freight-brokerage platform connecting Hauliers with verified Drivers and
 | Infrastructure | AWS ECS Fargate · RDS MySQL · S3 · CloudFront |
 | Integrations | Google Maps Platform · Razorpay/Stripe · Firebase FCM · SendGrid |
 | Target Go-Live | Week 20 |
-"# flexishift" 
